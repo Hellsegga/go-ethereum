@@ -436,8 +436,11 @@ func (s *PublicBlockChainAPI) BlockNumber() *big.Int {
 // block numbers are also allowed.
 func (s *PublicBlockChainAPI) GetBalance(ctx context.Context, address common.Address, blockNr rpc.BlockNumber) (*big.Int, error) {
 	state, _, err := s.b.StateAndHeaderByNumber(ctx, blockNr)
-	if state == nil || err != nil {
+	if err != nil {
 		return nil, err
+	}
+	if state == nil {
+		return nil, fmt.Errorf("unknown block")
 	}
 
 	return state.GetBalance(ctx, address)
